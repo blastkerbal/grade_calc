@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Final Exam Grade Calculator</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+        body {
+            background-color: #0f172a;
+            color: #f8fafc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            background-color: #1e293b;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 450px;
+            border: 1px solid #334155;
+        }
+        h1 {
+            font-size: 24px;
+            margin-top: 0;
+            margin-bottom: 24px;
+            text-align: center;
+            color: #38bdf8;
+        }
+        .input-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #cbd5e1;
+        }
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        input {
+            width: 100%;
+            padding: 12px 40px 12px 16px;
+            background-color: #0f172a;
+            border: 1px solid #475569;
+            border-radius: 6px;
+            color: #fff;
+            font-size: 16px;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        input:focus {
+            outline: none;
+            border-color: #38bdf8;
+            box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.15);
+        }
+        .suffix {
+            position: absolute;
+            right: 16px;
+            color: #64748b;
+            font-weight: 600;
+            pointer-events: none;
+        }
+        button {
+            width: 100%;
+            background-color: #0284c7;
+            color: white;
+            border: none;
+            padding: 14px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #0369a1;
+        }
+        .result-box {
+            margin-top: 24px;
+            padding: 20px;
+            background-color: #0f172a;
+            border-radius: 8px;
+            border-left: 4px solid #38bdf8;
+            display: none;
+        }
+        .result-text {
+            font-size: 16px;
+            line-height: 1.5;
+            color: #e2e8f0;
+            margin: 0;
+        }
+        .highlight {
+            color: #38bdf8;
+            font-weight: 700;
+            font-size: 20px;
+        }
+        .meme-alert {
+            margin-top: 12px;
+            font-size: 12px;
+            color: #f43f5e;
+            font-weight: bold;
+            display: none;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Grade Calculator</h1>
+
+    <div class="input-group">
+        <label for="currentGrade">Your Current Grade</label>
+        <div class="input-wrapper">
+            <input type="number" id="currentGrade" placeholder="e.g., 68" min="0" max="200" step="any" required>
+            <span class="suffix">%</span>
+        </div>
+    </div>
+
+    <div class="input-group">
+        <label for="finalWeight">Final Exam Weight</label>
+        <div class="input-wrapper">
+            <input type="number" id="finalWeight" placeholder="e.g., 30" min="0" max="100" step="any" required>
+            <span class="suffix">%</span>
+        </div>
+    </div>
+
+    <div class="input-group">
+        <label for="targetGrade">Target / Passing Grade</label>
+        <div class="input-wrapper">
+            <input type="number" id="targetGrade" placeholder="e.g., 50" min="0" max="200" step="any" required>
+            <span class="suffix">%</span>
+        </div>
+    </div>
+
+    <button onclick="calculateGrade()">Calculate Required Score</button>
+
+    <div id="resultBox" class="result-box">
+        <p id="resultText" class="result-text"></p>
+        <div id="memeAlert" class="meme-alert">💥 MISSION ACCOMPLISHED: TARGET IS 67 / 69! 💥</div>
+    </div>
+</div>
+
+<script>
+    function calculateGrade() {
+        const currentGrade = parseFloat(document.getElementById('currentGrade').value);
+        const finalWeightPercent = parseFloat(document.getElementById('finalWeight').value);
+        const targetGrade = parseFloat(document.getElementById('targetGrade').value);
+
+        const resultBox = document.getElementById('resultBox');
+        const resultText = document.getElementById('resultText');
+        const memeAlert = document.getElementById('memeAlert');
+
+        if (isNaN(currentGrade) || isNaN(finalWeightPercent) || isNaN(targetGrade)) {
+            alert("Please fill out all fields with valid numbers.");
+            return;
+        }
+
+        if (finalWeightPercent <= 0 || finalWeightPercent >= 100) {
+            alert("Final exam weight must be between 0% and 100%.");
+            return;
+        }
+
+        const finalWeight = finalWeightPercent / 100;
+        const currentWeight = 1 - finalWeight;
+
+        const rawRequiredScore = (targetGrade - (currentGrade * currentWeight)) / finalWeight;
+
+        // Math.ceil forces any decimal (even 0.1 or 0.3) to round up to the next whole number
+        const requiredScore = Math.ceil(rawRequiredScore);
+
+        resultBox.style.display = 'block';
+
+        if (targetGrade === 67 || targetGrade === 69) {
+            memeAlert.style.display = 'block';
+        } else {
+            memeAlert.style.display = 'none';
+        }
+
+        if (requiredScore <= 0) {
+            resultText.innerHTML = `You already secured your goal! Even if you get a <span class="highlight">0%</span> on the final, your total grade will be <span class="highlight">${(currentGrade * currentWeight).toFixed(2)}%</span>, which clears your target.`;
+        } else {
+            resultText.innerHTML = `To finish the class with a <span class="highlight">${targetGrade}%</span>, you need to score at least <span class="highlight">${requiredScore}%</span> on the final exam.`;
+        }
+    }
+</script>
+
+</body>
+</html>
